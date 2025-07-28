@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Livro Digital</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: sans-serif;
+      background-color: #111;
+      color: #000;
+    }
+
+    .book {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      transition: transform 0.4s ease-in-out;
+    }
+
+    .page {
+      flex: 0 0 100vw;
+      height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background-color: #fff;
+      color: #000;
+    }
+
+    .page.capa {
+      background-color: #000080;
+      color: #fff;
+    }
+
+    .page h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .page p {
+      font-size: 1.2rem;
+      line-height: 1.5;
+    }
+
+    button {
+      background: #e50914;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #b20710;
+    }
+
+    .sumario {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-height: 70vh;
+      overflow-y: auto;
+      width: 100%;
+      padding-top: 10px;
+    }
+
+    .sumario button {
+      background: #ddd;
+      color: #000;
+      margin: 5px;
+      width: 90%;
+      text-align: left;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .sumario button:hover {
+      background: #bbb;
+    }
+
+    .capa-img {
+      width: 80%;
+      max-width: 300px;
+      margin-bottom: 20px;
+      border-radius: 100%;
+    }
+
+    .autor {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: #ccc;
+    }
+
+    .sumario-titulo {
+      margin-bottom: 10px;
+      border-bottom: 2px solid #000;
+      padding-bottom: 5px;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+<div id="book" class="book">
+  <!-- Páginas geradas dinamicamente -->
+</div>
+
+<script>
+  const book = document.getElementById('book');
+  let currentPage = 0;
+  let totalPages = 0;
+
+  fetch('livro.json')
+    .then(res => res.json())
+    .then(capitulos => {
+      totalPages = capitulos.length + 2;
+
+      // Capa com imagem e botão vermelho com texto azul
+      const capa = document.createElement('div');
+      capa.className = 'page capa';
+      capa.innerHTML = `
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdZGfZDiPabLlO_0-Oux-km958pC-diFLTQA&s" class="capa-img" alt="Capa do livro">
+        <h1>Musicas Umadeb</h1>
+        <br />
+        <button id="btn-voltar-sumario">
+          Sumário
+        </button>
+      `;
+      book.appendChild(capa);
+
+      // Sumário
+      const sumarioPage = document.createElement('div');
+      sumarioPage.className = 'page';
+      sumarioPage.innerHTML = `
+        <h1 class="sumario-titulo">📖 Sumário</h1>
+        <div class="sumario" id="sumario"></div>
+      `;
+      book.appendChild(sumarioPage);
+
+      const sumario = sumarioPage.querySelector('#sumario');
+
+      // Cria as páginas dos capítulos
+      capitulos.forEach((cap, i) => {
+        const page = document.createElement('div');
+        page.className = 'page';
+        page.innerHTML = `<h1>${cap.titulo}</h1><p>${cap.conteudo}</p>`;
+        book.appendChild(page);
+
+        const btn = document.createElement('button');
+        btn.textContent = `${i + 1}. ${cap.titulo}`;
+        btn.onclick = () => {
+          currentPage = i + 2;
+          updatePage();
+        };
+        sumario.appendChild(btn);
+      });
+
+      // Botão voltar ao sumário na capa
+      document.getElementById('btn-voltar-sumario').onclick = () => {
+        // Abre sumario.html numa nova aba
+        window.open('sumario.html', '_self');
+      };
+
+      updatePage();
+    });
+
+  function updatePage() {
+    book.style.transform = `translateX(-${currentPage * 100}vw)`;
+  }
+</script>
+
+</body>
+</html>

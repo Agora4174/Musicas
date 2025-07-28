@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Página do Capítulo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 0 10px;
+      background: #fff;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    p {
+      white-space: pre-line;
+      font-size: 1.1rem;
+      line-height: 1.5;
+      flex-grow: 1;
+      transition: font-size 0.2s ease;
+    }
+    .botoes {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+      gap: 10px;
+    }
+    button {
+      flex: 1;
+      background-color: #0070c0;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 1.1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    button:hover:not(:disabled) {
+      background-color: #005090;
+    }
+    button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+    /* Contêiner dos botões de controle de texto e impressão */
+    .controle-texto {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    .controle-texto button {
+      flex: none;
+      padding: 8px 14px;
+      font-size: 1rem;
+      border-radius: 5px;
+      background-color: #004080;
+    }
+    .controle-texto button:hover {
+      background-color: #002f5a;
+    }
+
+    /* Estilos para impressão */
+    @media print {
+      /* Esconde botões */
+      .controle-texto,
+      .botoes {
+        display: none !important;
+      }
+
+      /* Divide o texto em 2 colunas */
+      #conteudo {
+        column-count: 2;
+        column-gap: 40px;
+        font-size: 12pt;
+      }
+
+      @page {
+        margin: 20mm 15mm;
+      }
+
+      body {
+        background: white !important;
+        color: black !important;
+        max-width: none;
+        margin: 0;
+        padding: 10mm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1 id="titulo">Carregando...</h1>
+  <p id="conteudo">Por favor, aguarde.</p>
+
+  <div class="controle-texto">
+    <button id="aumentar">Aumentar Texto +</button>
+    <button id="diminuir">Diminuir Texto -</button>
+    <button id="imprimir">🖨️ Imprimir</button>
+  </div>
+
+  <div class="botoes">
+    <button id="voltar">◀ Voltar</button>
+    <button id="sumario">📖 Sumário</button>
+    <button id="proximo">Próximo ▶</button>
+  </div>
+
+<script>
+  // Função para pegar query param 'num'
+  function getQueryParam(name) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
+  }
+
+  fetch('livro.json')
+    .then(res => res.json())
+    .then(capitulos => {
+      let num = parseInt(getQueryParam('num'));
+      if (isNaN(num) || num < 0 || num >= capitulos.length) {
+        num = 0; // padrão para primeiro capítulo
+      }
+
+      const tituloEl = document.getElementById('titulo');
+      const conteudoEl = document.getElementById('conteudo');
+      const voltarBtn = document.getElementById('voltar');
+      const proximoBtn = document.getElementById('proximo');
+      const sumarioBtn = document.getElementById('sumario');
+
+      const aumentarBtn = document.getElementById('aumentar');
+      const diminuirBtn = document.getElementById('diminuir');
+      const imprimirBtn = document.getElementById('imprimir');
+
+      let fontSize = 18; // px, valor inicial aproximado
+      conteudoEl.style.fontSize = fontSize + 'px';
+
+      function carregarCapitulo(i) {
+        tituloEl.textContent = capitulos[i].titulo;
+        conteudoEl.textContent = capitulos[i].conteudo;
+        num = i;
+
+        voltarBtn.disabled = (num === 0);
+        proximoBtn.disabled = (num === capitulos.length - 1);
+        fontSize = 18;
+        conteudoEl.style.fontSize = fontSize + 'px';
+      }
+
+      voltarBtn.onclick = () => {
+        if (num > 0) {
+          carregarCapitulo(num - 1);
+        }
+      };
+
+      proximoBtn.onclick = () => {
+        if (num < capitulos.length - 1) {
+          carregarCapitulo(num + 1);
+        }
+      };
+
+      sumarioBtn.onclick = () => {
+        window.location.href = 'sumario.html';
+      };
+
+      aumentarBtn.onclick = () => {
+        if (fontSize < 36) { // tamanho máximo
+          fontSize += 2;
+          conteudoEl.style.fontSize = fontSize + 'px';
+        }
+      };
+
+      diminuirBtn.onclick = () => {
+        if (fontSize > 12) { // tamanho mínimo
+          fontSize -= 2;
+          conteudoEl.style.fontSize = fontSize + 'px';
+        }
+      };
+
+      imprimirBtn.onclick = () => {
+        window.print();
+      };
+
+      carregarCapitulo(num);
+    })
+    .catch(err => {
+      document.getElementById('titulo').textContent = 'Erro ao carregar o conteúdo';
+      document.getElementById('conteudo').textContent = 'Não foi possível carregar o arquivo livro.json.';
+      console.error(err);
+    });
+</script>
+
+</body>
+</html>
