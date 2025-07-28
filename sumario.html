@@ -10,27 +10,30 @@
       background: #fff;
       margin: 20px;
       color: #000;
-      }
-      .btn-voltar {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color:blue;
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-    border-radius: 6px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  .btn-voltar:hover {
-    background-color: darkred;
-  }   
-      
+    }
+
+    .btn-voltar {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: red;
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-voltar:hover {
+      background-color: darkred;
+    }
+
     h1 {
       text-align: center;
       margin-bottom: 20px;
     }
+
     .sumario {
       max-width: 400px;
       margin: auto;
@@ -38,6 +41,7 @@
       flex-direction: column;
       gap: 8px;
     }
+
     button {
       padding: 10px;
       font-size: 1.1rem;
@@ -48,14 +52,24 @@
       color: white;
       transition: background-color 0.2s ease;
     }
+
     button:hover {
       background-color: #005090;
+    }
+
+    /* Estilos para impressão */
+    @media print {
+      .btn-voltar,
+      button {
+        display: none !important;
+      }
     }
   </style>
 </head>
 <body>
 
-  <a href="index.html" class="btn-voltar">Voltar a Capa</a> <h1>📖 Sumário</h1>
+  <a href="index.html" class="btn-voltar">Voltar à Capa</a>
+  <h1>📖 Sumário</h1>
   <div class="sumario" id="sumario"></div>
 
   <script>
@@ -67,7 +81,6 @@
           const btn = document.createElement('button');
           btn.textContent = `${i + 1}. ${cap.titulo}`;
           btn.onclick = () => {
-            // Abre pagina.html passando o índice no query param
             window.location.href = `pagina.html?num=${i}`;
           };
           sumarioDiv.appendChild(btn);

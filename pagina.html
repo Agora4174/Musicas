@@ -51,7 +51,7 @@
       background-color: #999;
       cursor: not-allowed;
     }
-    /* Contêiner dos botões de controle de texto e impressão */
+
     .controle-texto {
       margin-top: 20px;
       display: flex;
@@ -71,13 +71,11 @@
 
     /* Estilos para impressão */
     @media print {
-      /* Esconde botões */
       .controle-texto,
       .botoes {
         display: none !important;
       }
 
-      /* Divide o texto em 2 colunas */
       #conteudo {
         column-count: 2;
         column-gap: 40px;
@@ -116,7 +114,6 @@
   </div>
 
 <script>
-  // Função para pegar query param 'num'
   function getQueryParam(name) {
     const params = new URLSearchParams(window.location.search);
     return params.get(name);
@@ -127,7 +124,7 @@
     .then(capitulos => {
       let num = parseInt(getQueryParam('num'));
       if (isNaN(num) || num < 0 || num >= capitulos.length) {
-        num = 0; // padrão para primeiro capítulo
+        num = 0;
       }
 
       const tituloEl = document.getElementById('titulo');
@@ -140,7 +137,7 @@
       const diminuirBtn = document.getElementById('diminuir');
       const imprimirBtn = document.getElementById('imprimir');
 
-      let fontSize = 18; // px, valor inicial aproximado
+      let fontSize = 18;
       conteudoEl.style.fontSize = fontSize + 'px';
 
       function carregarCapitulo(i) {
@@ -155,15 +152,11 @@
       }
 
       voltarBtn.onclick = () => {
-        if (num > 0) {
-          carregarCapitulo(num - 1);
-        }
+        if (num > 0) carregarCapitulo(num - 1);
       };
 
       proximoBtn.onclick = () => {
-        if (num < capitulos.length - 1) {
-          carregarCapitulo(num + 1);
-        }
+        if (num < capitulos.length - 1) carregarCapitulo(num + 1);
       };
 
       sumarioBtn.onclick = () => {
@@ -171,14 +164,14 @@
       };
 
       aumentarBtn.onclick = () => {
-        if (fontSize < 36) { // tamanho máximo
+        if (fontSize < 36) {
           fontSize += 2;
           conteudoEl.style.fontSize = fontSize + 'px';
         }
       };
 
       diminuirBtn.onclick = () => {
-        if (fontSize > 12) { // tamanho mínimo
+        if (fontSize > 12) {
           fontSize -= 2;
           conteudoEl.style.fontSize = fontSize + 'px';
         }
